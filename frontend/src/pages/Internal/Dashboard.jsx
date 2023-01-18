@@ -3,18 +3,19 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 // Custom
 import { useAuth } from '../../context/Auth';
 import { UsersTable } from '../../components/UsersTable';
 import { CreateUser } from '../../components/Modal/CreateUser';
 import { MyProfile } from '../../components/Modal/MyProfile';
+import { RealTimeChat } from '../../components/Modal/RealTimeChat';
 // Context
 import { useRefreshTable } from '../../context/RefreshTable';
 
@@ -50,20 +51,30 @@ export function Dashboard() {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             <Container maxWidth="lg" sx={{ mt: 5 }}>
-                <Stack spacing={1} direction="row">
-                    <CreateUser />
-                    <MyProfile />
-                    <Tooltip title="Refresh">
-                        <IconButton variant="contained" onClick={() => refreshTable()}>
-                            <RefreshIcon />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Logout">
-                        <IconButton variant="contained" onClick={() => handleLogout()}>
-                            <ExitToAppIcon />
-                        </IconButton>
-                    </Tooltip>
-                </Stack>
+                <Box spacing={1} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box>
+                        <CreateUser />
+                        <MyProfile />
+                        <Tooltip title="Refresh">
+                            <IconButton variant="contained" onClick={() => refreshTable()}>
+                                <RefreshIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Logout">
+                            <IconButton variant="contained" onClick={() => handleLogout()}>
+                                <ExitToAppIcon />
+                            </IconButton>
+                        </Tooltip>
+                    </Box>
+                    <Box>
+                        <Tooltip title="Notifications">
+                            <IconButton variant="contained" onClick={() => refreshTable()}>
+                                <NotificationsIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <RealTimeChat />
+                    </Box>
+                </Box>
             </Container>
             <Container maxWidth="lg" sx={{ mt: 2, mb: 4 }}>
                 <Grid item xs={12}>
