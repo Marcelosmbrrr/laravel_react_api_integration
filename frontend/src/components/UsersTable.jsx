@@ -28,12 +28,15 @@ const columns = [
         editable: false,
     },
     {
-        field: 'role_id',
+        field: 'role',
         headerName: 'Role',
         flex: 1,
         minWidth: 200,
         sortable: true,
         editable: false,
+        valueGetter: (data) => {
+            return data.row.role.name;
+        }
     },
     {
         field: 'created_at',

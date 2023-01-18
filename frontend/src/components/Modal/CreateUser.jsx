@@ -147,7 +147,7 @@ export function CreateUser() {
                                 value={formData.name}
                                 error={formError.name.error}
                                 helperText={formError.name.message}
-                                onChange={(e) => handleChange(e)}
+                                onChange={handleChange}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -163,7 +163,7 @@ export function CreateUser() {
                                 value={formData.email}
                                 error={formError.email.error}
                                 helperText={formError.email.message}
-                                onChange={(e) => handleChange(e)}
+                                onChange={handleChange}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -179,7 +179,7 @@ export function CreateUser() {
                                 value={formData.password}
                                 error={formError.password.error}
                                 helperText={formError.password.message}
-                                onChange={(e) => handleChange(e)}
+                                onChange={handleChange}
                             />
                         </Grid>
                     </Grid>

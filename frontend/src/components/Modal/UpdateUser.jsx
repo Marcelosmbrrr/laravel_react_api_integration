@@ -24,8 +24,8 @@ const initialAlert = { display: false, type: "", message: "" }
 
 const formValidation = {
     name: {
-        test: (value) => /^[A-Za-z]{3,}$/.test(value),
-        message: 'Name must have only letters and at least 3.'
+        test: (value) => value != null && value.length >= 3,
+        message: 'Name must have at least 3 letters.'
     },
     email: {
         test: (value) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value),
@@ -46,7 +46,7 @@ export const UpdateUser = React.memo((props) => {
 
     function handleOpen() {
         setOpen(true);
-        setFormData(props.formData);
+        setFormData({ name: props.formData.name, email: props.formData.email });
         setFormError(initialFormError);
         setAlert(initialAlert);
     }
@@ -100,7 +100,7 @@ export const UpdateUser = React.memo((props) => {
 
         } catch (error) {
 
-            setAlert({ display: true, type: "success", message: error.response.data.message });
+            setAlert({ display: true, type: "error", message: error.response.data.message });
 
         } finally {
 
@@ -134,6 +134,7 @@ export const UpdateUser = React.memo((props) => {
                                 autoFocus
                                 margin="dense"
                                 id="name"
+                                name="name"
                                 label="Name"
                                 type="text"
                                 fullWidth
@@ -149,6 +150,7 @@ export const UpdateUser = React.memo((props) => {
                                 autoFocus
                                 margin="dense"
                                 id="email"
+                                name="email"
                                 label="Email Address"
                                 type="email"
                                 fullWidth

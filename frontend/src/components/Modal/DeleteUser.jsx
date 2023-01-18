@@ -60,7 +60,7 @@ export const DeleteUser = React.memo((props) => {
 
         } catch (error) {
 
-            setAlert({ display: true, type: "success", message: error.response.data.message });
+            setAlert({ display: true, type: "error", message: error.response.data.message });
 
         } finally {
 
