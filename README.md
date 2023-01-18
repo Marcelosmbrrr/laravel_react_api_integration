@@ -1,2 +1,2 @@
-# laravel_react_api_integration
+# Laravel as Api integrated with React
 Simple app to explore the integration of Laravel as Api with React.
