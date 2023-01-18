@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
         const token = localStorage.getItem('authtoken');
 
         if (!!token) {
-            axios.get("http://localhost:8000/api/v1/auth-data", {
+            axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth-data`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
         try {
 
             const response = await axios({
-                url: "http://localhost:8000/api/v1/signin",
+                url: `${import.meta.env.VITE_BACKEND_URL}/signin`,
                 method: 'POST',
                 responseType: 'json',
                 headers: {
@@ -71,7 +71,7 @@ export function AuthProvider({ children }) {
         try {
 
             const response = await axios({
-                url: "http://localhost:8000/api/v1/signout",
+                url: `${import.meta.env.VITE_BACKEND_URL}/signout`,
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

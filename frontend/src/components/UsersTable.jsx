@@ -87,7 +87,7 @@ export function UsersTable() {
             'Authorization': `Bearer ${token}`
         }
 
-        axios.get("http://localhost:8000/api/v1/user", {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/user`, {
             headers: headers
         })
             .then((response) => {

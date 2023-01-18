@@ -89,7 +89,7 @@ export const UpdateUser = React.memo((props) => {
                 'Authorization': `Bearer ${token}`
             }
 
-            const response = await axios.patch("http://localhost:8000/api/v1/user/" + props.formData.id, formData, { headers });
+            const response = await axios.patch(`${import.meta.env.VITE_BACKEND_URL}/user/${props.formData.id}`, formData, { headers });
 
             setAlert({ display: true, type: "success", message: response.data.message });
 

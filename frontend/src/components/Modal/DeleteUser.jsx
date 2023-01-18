@@ -49,7 +49,7 @@ export const DeleteUser = React.memo((props) => {
                 'Authorization': `Bearer ${token}`
             }
 
-            const response = await axios.delete("http://localhost:8000/api/v1/user/" + props.formData.id, { headers });
+            const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/user/${props.formData.id}`, { headers });
 
             setAlert({ display: true, type: "success", message: response.data.message });
 

@@ -93,7 +93,7 @@ export function CreateUser() {
                 'Authorization': `Bearer ${token}`
             }
 
-            const response = await axios.post("http://localhost:8000/api/v1/user", formData, { headers });
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user`, formData, { headers });
 
             setAlert({ display: true, type: "success", message: response.data.message });
 
