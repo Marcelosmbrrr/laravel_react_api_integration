@@ -20,6 +20,7 @@ import { useRefreshTable } from '../../context/RefreshTable';
 
 const initialFormData = { name: '', email: '' }
 const initialFormError = { name: { error: false, message: '' }, email: { error: false, message: '' } }
+const initialAlert = { display: false, type: "", message: "" }
 
 const formValidation = {
     name: {
@@ -39,7 +40,7 @@ export const UpdateUser = React.memo((props) => {
     // Local states
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-    const [alert, setAlert] = React.useState({ display: false, type: "", message: "" });
+    const [alert, setAlert] = React.useState(initialAlert);
     const [formData, setFormData] = React.useState(initialFormData);
     const [formError, setFormError] = React.useState(initialFormError);
 
@@ -47,6 +48,7 @@ export const UpdateUser = React.memo((props) => {
         setOpen(true);
         setFormData(props.formData);
         setFormError(initialFormError);
+        setAlert(initialAlert);
     }
 
     function handleClose() {
@@ -80,14 +82,14 @@ export const UpdateUser = React.memo((props) => {
 
         try {
 
-            const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('authtoken');
 
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
 
-            const response = await axios.patch("http://localhost:8000/api/v1/user/" + props.formData.id, headers, formData)
+            const response = await axios.patch("http://localhost:8000/api/v1/user/" + props.formData.id, formData, { headers });
 
             setAlert({ display: true, type: "success", message: response.data.message });
 

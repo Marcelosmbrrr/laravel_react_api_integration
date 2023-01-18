@@ -16,6 +16,8 @@ import { api as axios } from '../../services/api';
 // Context
 import { useRefreshTable } from '../../context/RefreshTable';
 
+const initialAlert = { display: false, type: "", message: "" }
+
 export const DeleteUser = React.memo((props) => {
 
     // Contexts
@@ -23,10 +25,11 @@ export const DeleteUser = React.memo((props) => {
     // Local states
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-    const [alert, setAlert] = React.useState({ display: false, type: "", message: "" });
+    const [alert, setAlert] = React.useState(initialAlert);
 
     function handleOpen() {
         setOpen(true);
+        setAlert(initialAlert);
     }
 
     function handleClose() {
@@ -39,14 +42,14 @@ export const DeleteUser = React.memo((props) => {
 
         try {
 
-            const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('authtoken');
 
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
 
-            const response = await axios.delete("http://localhost:8000/api/v1/user/" + props.formData.id, headers)
+            const response = await axios.delete("http://localhost:8000/api/v1/user/" + props.formData.id, { headers });
 
             setAlert({ display: true, type: "success", message: response.data.message });
 

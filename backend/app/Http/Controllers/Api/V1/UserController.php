@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\V1\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\V1\User\{
@@ -43,12 +42,11 @@ class UserController extends Controller
      */
     public function store(CreateUserRequest $request)
     {
-
         $user = $this->model->create([
-            "name" => $request->only("name"),
-            "role_id" => 1,
-            "email" => $request->only("email"),
-            "password" => Hash::make($request->only("password"))
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => Hash::make($request->password),
+            "role_id" => $request->role ?? 1
         ]);
 
         return response()->json([

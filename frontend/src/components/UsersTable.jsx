@@ -80,19 +80,21 @@ export function UsersTable() {
         let is_mounted = true;
         if (!is_mounted) return '';
 
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('authtoken');
 
         const headers = {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`
         }
 
-        axios.get("http://localhost:8000/api/v1/user", headers)
+        axios.get("http://localhost:8000/api/v1/user", {
+            headers: headers
+        })
             .then((response) => {
                 setData(response.data.users);
             })
             .catch((error) => {
-                enqueueSnackbar(error.response.message, { variant: "error" });
+                enqueueSnackbar(error.response.data.message, { variant: "error" });
             })
             .finally(() => {
                 setLoading(false);

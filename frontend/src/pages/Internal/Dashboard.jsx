@@ -31,7 +31,7 @@ export function Dashboard() {
     React.useEffect(() => {
 
         if (isAuthenticated) {
-            //console.log('Authenticated.')
+            //
         }
 
     })

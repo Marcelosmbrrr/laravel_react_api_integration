@@ -14,9 +14,9 @@ export function AuthProvider({ children }) {
     // This wil be call when user refreh the page
     React.useEffect(() => {
 
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('authtoken');
 
-        if (token) {
+        if (!!token) {
             axios.get("http://localhost:8000/api/v1/auth-data", {
                 headers: {
                     'Content-Type': 'application/json',
@@ -45,7 +45,9 @@ export function AuthProvider({ children }) {
                 data: JSON.stringify(formData)
             });
 
-            localStorage.setItem('access_token', response.data.token);
+            console.log(response.data)
+
+            localStorage.setItem("authtoken", response.data.token)
 
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
 

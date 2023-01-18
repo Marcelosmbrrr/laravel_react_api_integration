@@ -20,11 +20,12 @@ import { useRefreshTable } from '../../context/RefreshTable';
 
 const initialFormData = { name: '', email: '', password: '' }
 const initialFormError = { name: { error: false, message: '' }, email: { error: false, message: '' }, password: { error: false, message: '' } }
+const initialAlert = { display: false, type: "", message: "" }
 
 const formValidation = {
     name: {
-        test: (value) => /^[A-Za-z]{3,}$/.test(value),
-        message: 'Name must have only letters and at least 3.'
+        test: (value) => value != null && value.length >= 3,
+        message: 'Name must have at least 3 letters.'
     },
     email: {
         test: (value) => /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value),
@@ -43,7 +44,7 @@ export function CreateUser() {
     // Local states
     const [open, setOpen] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
-    const [alert, setAlert] = React.useState({ display: false, type: "", message: "" });
+    const [alert, setAlert] = React.useState(initialAlert);
     const [formData, setFormData] = React.useState(initialFormData);
     const [formError, setFormError] = React.useState(initialFormError);
 
@@ -51,6 +52,7 @@ export function CreateUser() {
         setOpen(true);
         setFormData(initialFormData);
         setFormError(initialFormError);
+        setAlert(initialAlert);
     }
 
     function handleClose() {
@@ -84,14 +86,14 @@ export function CreateUser() {
 
         try {
 
-            const token = localStorage.getItem('access_token');
+            const token = localStorage.getItem('authtoken');
 
             const headers = {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
             }
 
-            const response = await axios.post("http://localhost:8000/api/v1/user", headers, formData);
+            const response = await axios.post("http://localhost:8000/api/v1/user", formData, { headers });
 
             setAlert({ display: true, type: "success", message: response.data.message });
 
