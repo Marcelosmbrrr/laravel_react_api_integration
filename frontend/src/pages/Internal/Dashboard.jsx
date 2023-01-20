@@ -9,7 +9,6 @@ import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 // Custom
 import { useAuth } from '../../context/Auth';
 import { UsersTable } from '../../components/UsersTable';
@@ -67,11 +66,6 @@ export function Dashboard() {
                         </Tooltip>
                     </Box>
                     <Box>
-                        <Tooltip title="Notifications">
-                            <IconButton variant="contained" onClick={() => refreshTable()}>
-                                <NotificationsIcon />
-                            </IconButton>
-                        </Tooltip>
                         <RealTimeChat />
                     </Box>
                 </Box>

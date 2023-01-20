@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Login } from "../pages/Guest/Login";
 import { Dashboard } from '../pages/Internal/Dashboard';
 import { NotFound } from '../pages/NotFound';
@@ -10,6 +10,7 @@ export function AppRoutes() {
 
     return (
         <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/login" element={<Login />} />
             <Route exact path="/internal/dashboard" element={
                 <RefreshTableProvider>

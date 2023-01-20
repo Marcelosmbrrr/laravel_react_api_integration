@@ -16,13 +16,13 @@ export function AuthProvider({ children }) {
 
         const token = localStorage.getItem('authtoken');
 
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+
         if (!!token) {
-            axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth-data`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            })
+            axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth-data`, { headers })
                 .then((response) => {
                     setUser(response.data.user);
                 })
@@ -66,7 +66,7 @@ export function AuthProvider({ children }) {
     async function signOut() {
 
         // Get token
-        const token = localStorage.getItem('access_token');
+        const token = localStorage.getItem('authtoken');
 
         try {
 
@@ -79,7 +79,7 @@ export function AuthProvider({ children }) {
                 }
             });
 
-            localStorage.removeItem('access_token');
+            localStorage.removeItem('authtoken');
 
             setUser(null);
 
