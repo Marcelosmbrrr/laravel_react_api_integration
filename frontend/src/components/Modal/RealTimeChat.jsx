@@ -15,6 +15,9 @@ import Badge from '@mui/material/Badge';
 // Styled
 import styled from 'styled-components';
 import { Typography } from '@mui/material';
+// Pusher and Echo
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
 
 const ChatContainer = styled.div`
   width: 100%;
@@ -45,7 +48,22 @@ export function RealTimeChat() {
 
     const [open, setOpen] = React.useState(false);
     const [messages, setMessages] = React.useState([]);
+    const [message, setMessage] = React.useState(null);
     const [connected, setConnected] = React.useState(false);
+
+    React.useEffect(() => {
+
+        const pusher = new Pusher(`${import.meta.env.VITE_PUSHER_APP_KEY}`, {
+            cluster: `${import.meta.env.VITE_PUSHER_APP_CLUSTER}`
+        });
+
+        const channel = pusher.subscribe('chat');
+        channel.bind('message', function (data) {
+            messages.push(data);
+            setMessage();
+        });
+
+    }, [message])
 
     const handleOpen = () => {
         setOpen(true);
