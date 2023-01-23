@@ -8,26 +8,28 @@ import Tooltip from '@mui/material/Tooltip';
 import ChatIcon from '@mui/icons-material/Chat';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Stack from '@mui/material/Stack';
 import PersonIcon from '@mui/icons-material/Person';
 import Badge from '@mui/material/Badge';
+import TextField from '@mui/material/TextField';
+import SendIcon from '@mui/icons-material/Send';
+import InputAdornment from '@mui/material/InputAdornment';
+import CloseIcon from '@mui/icons-material/Close';
 // Styled
 import styled from 'styled-components';
-import { Typography } from '@mui/material';
+import { DialogTitle, Divider, Typography } from '@mui/material';
 // Pusher and Echo
-import Echo from 'laravel-echo';
-import Pusher from 'pusher-js';
-
-const ChatContainer = styled.div`
-  width: 100%;
-  min-height: 400px;
-`;
+import pusher from '../../services/pusher';
+// Moment
+import moment from 'moment';
+// Axios
+import { api as axios } from '../../services/api';
 
 const ChatRow = styled.div`
     display: flex;
     flex-direction: column;
-    padding: 1px;
+    padding: 5px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 `;
 
 const ChatRowAvatar = styled.div`
@@ -44,37 +46,39 @@ const ChatRowMessage = styled.div`
     flex-grow: 1;
 `;
 
+const messageValidation = {
+    test: (value) => !(value === null || value.lenght === 0),
+    message: 'Type your message'
+}
+
 export function RealTimeChat() {
 
     const [open, setOpen] = React.useState(false);
+    const [message, setMessage] = React.useState("");
+    const [messageError, setMessageError] = React.useState({ error: false, message: '' });
     const [messages, setMessages] = React.useState([]);
-    const [message, setMessage] = React.useState(null);
     const [connected, setConnected] = React.useState(false);
 
     React.useEffect(() => {
 
-        const pusher = new Pusher(`${import.meta.env.VITE_PUSHER_APP_KEY}`, {
-            cluster: `${import.meta.env.VITE_PUSHER_APP_CLUSTER}`
-        });
-
         const channel = pusher.subscribe('chat');
         channel.bind('message', function (data) {
+            setMessages((previously) => previously.push(data));
             messages.push(data);
-            setMessage();
         });
 
-    }, [message])
+    }, [messages]);
 
     const handleOpen = () => {
         setOpen(true);
 
         if (connected) return '';
 
-        // Artificial loading
+        // Simulation loading
         setTimeout(() => {
             setConnected(true);
             setMessages([
-                { name: 'You', avatar: 'Y', message: 'You are online now!' }
+                { name: 'You', time: moment().format("LT"), avatar: 'Y', message: 'You are online now!' }
             ]);
         }, 3000);
     };
@@ -82,6 +86,39 @@ export function RealTimeChat() {
     const handleClose = () => {
         setOpen(false);
     };
+
+    function handleSubmit() {
+
+        const is_valid = messageValidation.test(message);
+        const error_message = is_valid ? '' : messageValidation.message;
+
+        setMessageError({ error: !is_valid, message: error_message });
+
+        if (!is_valid) return '';
+
+        requestServer();
+
+    }
+
+    async function requestServer() {
+
+        const token = localStorage.getItem('authtoken');
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        }
+
+        try {
+
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/message`, { message }, { headers });
+            console.log(response)
+
+        } catch (e) {
+            setMessageError({ error: true, message: error.response.data.message });
+        }
+
+    }
 
     function renderMessages() {
 
@@ -93,19 +130,25 @@ export function RealTimeChat() {
         } else if (connected) {
             return (
                 <>
-                    <ChatRow>
-                        <Box sx={{ display: 'flex' }}>
-                            <ChatRowAvatar>
-                                <PersonIcon color='success' />
-                            </ChatRowAvatar>
-                            <ChatRowPersonName>
-                                {messages[0].name}
-                            </ChatRowPersonName>
-                        </Box>
-                        <ChatRowMessage>
-                            {messages[0].message}
-                        </ChatRowMessage>
-                    </ChatRow>
+                    {messages.map((message) =>
+                        <>
+                            <ChatRow>
+                                <Box sx={{ display: 'flex' }}>
+                                    <ChatRowAvatar>
+                                        <PersonIcon color='success' />
+                                    </ChatRowAvatar>
+                                    <ChatRowPersonName>
+                                        {message.name}
+                                    </ChatRowPersonName>
+                                </Box>
+                                <ChatRowMessage>
+                                    <Typography fontSize={'15px'}>{message.message}</Typography>
+                                    <Typography fontSize={'10px'}>{message.time}</Typography>
+                                </ChatRowMessage>
+                            </ChatRow>
+                        </>
+                    )}
+
                 </>
             )
         }
@@ -126,20 +169,41 @@ export function RealTimeChat() {
                 maxWidth="sm"
                 fullWidth
             >
+                <DialogTitle sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <IconButton onClick={handleClose}>
+                        <CloseIcon />
+                    </IconButton>
+                </DialogTitle>
+                <Divider />
+
                 <DialogContent>
                     <DialogContentText>
 
-                        <Stack spacing={3}
-                            sx={{ overflowY: 'scroll', minHeight: '400px' }}
-                        >
+                        <Stack spacing={3} sx={{ overflow: 'auto' }}>
                             {renderMessages()}
                         </Stack>
 
                     </DialogContentText>
                 </DialogContent>
 
+                <Divider />
                 <DialogActions>
-                    <Button onClick={handleClose} variant="contained" color="error">Close</Button>
+                    <TextField
+                        label="Type your message"
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        error={messageError.error}
+                        helperText={messageError.message}
+                        fullWidth
+                        InputProps={{
+                            endAdornment: <InputAdornment position="end">
+                                <IconButton onClick={handleSubmit} disabled={!connected}>
+                                    <SendIcon />
+                                </IconButton>
+
+                            </InputAdornment>,
+                        }}
+                    />
                 </DialogActions>
             </Dialog>
         </>
