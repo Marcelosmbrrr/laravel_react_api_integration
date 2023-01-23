@@ -47,9 +47,13 @@ const ChatRowMessage = styled.div`
 `;
 
 const messageValidation = {
-    test: (value) => !(value === null || value.lenght === 0),
+    test: (message) => (message == null || message.length == 0),
     message: 'Type your message'
 }
+
+// Docs - subscribe channel : https://pusher.com/docs/channels/using_channels/public-channels/
+// Need to be the same name as the choosed for Laravel broadcasting channel 
+const channel = pusher.subscribe('chat');
 
 export function RealTimeChat() {
 
@@ -59,28 +63,24 @@ export function RealTimeChat() {
     const [messages, setMessages] = React.useState([]);
     const [connected, setConnected] = React.useState(false);
 
-    React.useEffect(() => {
-
-        const channel = pusher.subscribe('chat');
-        channel.bind('message', function (data) {
-            setMessages((previously) => previously.push(data));
-            messages.push(data);
-        });
-
-    }, [messages]);
+    // Docs - event as named channel listener: https://pusher.com/docs/channels/using_channels/events/
+    // Need to be the same name as the choosed for Laravel event 
+    channel.bind('message', function (data) {
+        // When 'message' event occurs, add new message to messages array
+        setMessages((previously) => previously.push(data));
+    });
 
     const handleOpen = () => {
         setOpen(true);
 
         if (connected) return '';
 
-        // Simulation loading
         setTimeout(() => {
             setConnected(true);
             setMessages([
-                { name: 'You', time: moment().format("LT"), avatar: 'Y', message: 'You are online now!' }
+                { name: 'You', avatar: { color: 'success' }, time: moment().format("LT"), message: 'You are online now!' }
             ]);
-        }, 3000);
+        }, 2000);
     };
 
     const handleClose = () => {
@@ -89,12 +89,12 @@ export function RealTimeChat() {
 
     function handleSubmit() {
 
-        const is_valid = messageValidation.test(message);
-        const error_message = is_valid ? '' : messageValidation.message;
+        const is_invalid = messageValidation.test(message);
+        const error_message = is_invalid ? messageValidation.message : '';
 
-        setMessageError({ error: !is_valid, message: error_message });
+        setMessageError({ error: is_invalid, message: error_message });
 
-        if (!is_valid) return '';
+        if (is_invalid) return '';
 
         requestServer();
 
@@ -102,20 +102,20 @@ export function RealTimeChat() {
 
     async function requestServer() {
 
-        const token = localStorage.getItem('authtoken');
-
-        const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        }
+        const formData = new FormData();
+        formData.append('message', message);
 
         try {
 
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/message`, { message }, { headers });
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/message`, formData);
+
+            setMessage('');
+
             console.log(response)
 
-        } catch (e) {
-            setMessageError({ error: true, message: error.response.data.message });
+        } catch (error) {
+            console.log(error)
+            setMessageError({ error: true, message: error.message });
         }
 
     }
@@ -130,12 +130,12 @@ export function RealTimeChat() {
         } else if (connected) {
             return (
                 <>
-                    {messages.map((message) =>
+                    {messages.map((message, index) =>
                         <>
-                            <ChatRow>
+                            <ChatRow key={index}>
                                 <Box sx={{ display: 'flex' }}>
                                     <ChatRowAvatar>
-                                        <PersonIcon color='success' />
+                                        <PersonIcon color={message.avatar.color} />
                                     </ChatRowAvatar>
                                     <ChatRowPersonName>
                                         {message.name}
@@ -187,7 +187,7 @@ export function RealTimeChat() {
                 </DialogContent>
 
                 <Divider />
-                <DialogActions>
+                <DialogActions sx={{ padding: '20px' }}>
                     <TextField
                         label="Type your message"
                         value={message}
