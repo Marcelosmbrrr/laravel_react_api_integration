@@ -24,6 +24,8 @@ import pusher from '../../services/pusher';
 import moment from 'moment';
 // Axios
 import { api as axios } from '../../services/api';
+// Context
+import { useAuth } from '../../context/Auth';
 
 const ChatRow = styled.div`
     display: flex;
@@ -57,6 +59,8 @@ const channel = pusher.subscribe('laravel-react-chat');
 
 export function RealTimeChat() {
 
+    const { user } = useAuth();
+
     const [open, setOpen] = React.useState(false);
     const [message, setMessage] = React.useState("");
     const [messageError, setMessageError] = React.useState({ error: false, message: '' });
@@ -67,10 +71,18 @@ export function RealTimeChat() {
     // The function $pusher->trigger(), in server side, send data to Pusher and Pusher to here
     channel.bind('new-message', function (data) {
 
-        console.log(data);
-        
-        // The data is always a new message that needs to be add to array of messages
-        //setMessages((previously) => previously.push(data));
+        // Data sent by server side and via Pusher
+        // console.log(data);
+
+        const updateMessages = [...messages, {
+            username: (data.user_id == user.id) ? 'You' : data.username,
+            message: data.message,
+            avatar: { color: (data.user_id == user.id) ? 'success' : 'disabled' },
+            time: moment().format("LT")
+        }];
+
+        setMessages(updateMessages);
+
     });
 
     const handleOpen = () => {
@@ -81,7 +93,7 @@ export function RealTimeChat() {
         setTimeout(() => {
             setConnected(true);
             setMessages([
-                { name: 'You', avatar: { color: 'success' }, time: moment().format("LT"), message: 'You are online now!' }
+                { username: 'You', avatar: { color: 'success' }, time: moment().format("LT"), message: 'You are online now!' }
             ]);
         }, 2000);
     };
@@ -139,7 +151,7 @@ export function RealTimeChat() {
                                         <PersonIcon color={message.avatar.color} />
                                     </ChatRowAvatar>
                                     <ChatRowPersonName>
-                                        {message.name}
+                                        {message.username}
                                     </ChatRowPersonName>
                                 </Box>
                                 <ChatRowMessage>
