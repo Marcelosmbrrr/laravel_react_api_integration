@@ -9,11 +9,12 @@ use App\Http\Requests\V1\Chat\SendMessageRequest;
 
 class ChatController extends Controller
 {
-    function message(Request $request)
-    {
-        dd("ok");
-        event(new MessageEvent($request->username, $request->message));
+    function message(SendMessageRequest $request)
+    {   
+        // Send message data to the event
+        // The data is sent to Pusher by the Listener of this event
+        event(new MessageEvent(auth()->user()->id, auth()->user()->username, $request->input('message')));
 
-        return [];
+        return response(["message" => "Message successful sent!"], 201);
     }
 }

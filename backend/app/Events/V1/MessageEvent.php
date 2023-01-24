@@ -13,7 +13,8 @@ use Illuminate\Queue\SerializesModels;
 class MessageEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    
+    public string $user_id;
     public string $message;
     public string $username;
 
@@ -22,8 +23,9 @@ class MessageEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(string $username, string $message)
+    public function __construct(string $user_id, string $username, string $message)
     {
+        $this->user_id = $user_id;
         $this->username = $username;
         $this->message = $message;
     }
@@ -35,7 +37,7 @@ class MessageEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return ['chat'];
+        return ['laravel-react-chat'];
     }
 
     /**
@@ -45,6 +47,6 @@ class MessageEvent implements ShouldBroadcast
      */
     public function broadcastAs()
     {
-        return 'message';
+        return 'new-message';
     }
 }

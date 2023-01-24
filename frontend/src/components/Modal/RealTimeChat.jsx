@@ -51,9 +51,9 @@ const messageValidation = {
     message: 'Type your message'
 }
 
-// Docs - subscribe channel : https://pusher.com/docs/channels/using_channels/public-channels/
-// Need to be the same name as the choosed for Laravel broadcasting channel 
-const channel = pusher.subscribe('chat');
+// Here, we subscribe the channel created in Pusher plataform
+// The same channel is subscribed in the server side
+const channel = pusher.subscribe('laravel-react-chat');
 
 export function RealTimeChat() {
 
@@ -63,11 +63,14 @@ export function RealTimeChat() {
     const [messages, setMessages] = React.useState([]);
     const [connected, setConnected] = React.useState(false);
 
-    // Docs - event as named channel listener: https://pusher.com/docs/channels/using_channels/events/
-    // Need to be the same name as the choosed for Laravel event 
-    channel.bind('message', function (data) {
-        // When 'message' event occurs, add new message to messages array
-        setMessages((previously) => previously.push(data));
+    // Here we create the event listener to Pusher throw the data sent by server side
+    // The function $pusher->trigger(), in server side, send data to Pusher and Pusher to here
+    channel.bind('new-message', function (data) {
+
+        console.log(data);
+        
+        // The data is always a new message that needs to be add to array of messages
+        //setMessages((previously) => previously.push(data));
     });
 
     const handleOpen = () => {
@@ -110,8 +113,6 @@ export function RealTimeChat() {
             const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/message`, formData);
 
             setMessage('');
-
-            console.log(response)
 
         } catch (error) {
             console.log(error)

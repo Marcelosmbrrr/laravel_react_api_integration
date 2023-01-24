@@ -41,9 +41,25 @@ class User extends Authenticatable
         'password'
     ];
 
+    /**
+     * Created att acessor.
+     *
+     * @param string
+     * @return string
+     */
     public function getCreatedAtAttribute($date)
     {
         return Carbon::parse($date)->format('Y/m/d');
+    }
+
+    /**
+     * Username acessor.
+     *
+     * @return string
+     */
+    public function getUsernameAttribute()
+    {
+        return "@" . strtolower(explode(" ", $this->name)[0]);
     }
 
     function role()
