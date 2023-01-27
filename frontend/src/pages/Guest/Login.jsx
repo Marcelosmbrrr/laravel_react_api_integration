@@ -1,6 +1,6 @@
 import * as React from 'react';
 // Material UI
-import { Button, CssBaseline, TextField, FormControlLabel, Checkbox, Box, Typography, Container } from '@mui/material';
+import { Button, CssBaseline, TextField, FormControlLabel, Checkbox, Box, Typography, Container, Stack } from '@mui/material';
 import { useSnackbar } from 'notistack';
 // Context 
 import { useAuth } from '../../context/Auth';
@@ -71,9 +71,10 @@ export function Login() {
                     alignItems: 'center',
                 }}
             >
-                <Box mb={1}>
+                <Stack direction="row" spacing={1} mb={2}>
                     <img width="60px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" />
-                </Box>
+                    <img width="60px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/laravel/laravel-plain-wordmark.svg" />
+                </Stack>
                 <Typography component="h1" variant="h5">
                     Sign in
                 </Typography>

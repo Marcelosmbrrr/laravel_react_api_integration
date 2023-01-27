@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { api as axios } from '../services/api';
+// Types 
+import { ReactJSXElement } from '@emotion/react/types/jsx-namespace';
 
 export const RefreshTableContext = React.createContext({});
 
